@@ -11,7 +11,9 @@ const (
 	NumPages    = VirtualMem / PageSize
 )
 
-// ValidateProcessSize valida se o tamanho do processo tem entre 1 byte e um 1 MB
+/*
+ValidateProcessSize valida se o tamanho do processo tem entre 1 byte e um 1 MB
+*/
 func ValidateProcessSize(sizes []int) error {
 	if len(sizes) < 2 {
 		return fmt.Errorf("é necessário no mínimo 2 processos (fornecidos: %d)", len(sizes))

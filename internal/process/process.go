@@ -44,10 +44,8 @@ func (p *LightProcess) Execute(ctx context.Context, wg *sync.WaitGroup, reqCh ch
 		vPage := virtualAddr / constants.PageSize
 		offset := virtualAddr % constants.PageSize
 
-		/*
-			   channels é mecanismo de comunicação entre goroutines; uma goroutines envia ch <-, e a outra recebe <-ch e bloqueia até o
-				 dados chegar, sem precisar usar mutex
-		*/
+		// channels é mecanismo de comunicação entre goroutines; uma goroutines envia ch <-, e a outra recebe <-ch e bloqueia até o
+		// dados chegar, sem precisar usar mutex
 		respCh := make(chan types.AccessResponse, 1)
 		req := types.AccessRequest{
 			ProcessID:      p.ID,

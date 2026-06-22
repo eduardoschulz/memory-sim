@@ -26,23 +26,22 @@ func NewMMU(pm *memory.PhysicalMemory, vMem []byte, table *pagetable.PageTable) 
 /*
 ProcessRequest é o metodo principal de acesso ao MMU
 */
-func (m *MMU) ProcessRequest(req types.AccessRequest) {
+func (m *MMU) ProcessRequest(req types.AccessRequest) types.AccessResponse {
 	vPage := req.VirtualAddress / constants.PageSize
 	offset := req.VirtualAddress % constants.PageSize
 
 	entry := m.PageTable.Translate(vPage)
 
 	if entry.Present {
-		req.ResponseCh <- m.handleHit(req, vPage, offset, entry)
-	} else {
-		req.ResponseCh <- m.handlePageFault(req, vPage, offset)
+		return m.handleHit(req, vPage, offset, entry)
 	}
+	return m.handlePageFault(req, vPage, offset)
 }
 
 /*
 handleHit processa um acesso cuja a pag. já esta carregada na memoria fisica.
 */
-func (m *MMU) handleHit(_ types.AccessRequest, vPage, offset int, entry *pagetable.PageEntry) types.AccessResponse {
+func (m *MMU) handleHit(req types.AccessRequest, vPage, offset int, entry *pagetable.PageEntry) types.AccessResponse {
 	m.PageTable.RecordAccess(vPage)
 	physAddr := entry.PhysicalFrame*constants.PageSize + offset
 	content := m.PhysicalMemory.ReadByte(entry.PhysicalFrame, offset)
@@ -66,7 +65,7 @@ func (m *MMU) handleHit(_ types.AccessRequest, vPage, offset int, entry *pagetab
 /*
 handlePageFault da com page fault: tenta alocar frame livre; se não houver, aplica o algoritmo de substituição (FIFO/LRU) conforme configurado.
 */
-func (m *MMU) handlePageFault(_ types.AccessRequest, vPage, offset int) types.AccessResponse {
+func (m *MMU) handlePageFault(req types.AccessRequest, vPage, offset int) types.AccessResponse {
 	fmt.Printf("[MMU]   Tradução: Página virtual %d → Falta de página!\n", vPage)
 
 	frame := m.PhysicalMemory.AllocateFrame()
