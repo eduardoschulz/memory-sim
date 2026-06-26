@@ -21,7 +21,7 @@ func main() {
 var rootCmd = &cobra.Command{
 	Use:   "simulator",
 	Short: "Simulador de paginação virtual com MMU, processos leves e algoritmos de substituição",
-	Long: `Simulador didático de memória virtual implementado em Go.
+	Long: `Simulador de memória virtual implementado em Go.
 
 Aplica conceitos de gerenciamento de memória:
   - Memória física: 64 KB (8 frames de 8 KB)
@@ -38,7 +38,7 @@ func init() {
 	rootCmd.Flags().IntP("instructions", "i", 20,
 		"Número total de instruções de acesso à memória")
 	rootCmd.Flags().StringP("algorithm", "a", "fifo",
-		"Algoritmo de substituição: fifo ou lru")
+		"Opções de Algoritmo: fifo ou lru")
 }
 
 func run(cmd *cobra.Command, args []string) {

@@ -22,21 +22,12 @@ type Config struct {
 	Algorithm    pagetable.Algorithm
 }
 
-/*
-Run orquestra toda a simulação:
-  - Cria e preenche o espaço virtual de 1 MB
-  - Instancia a memória física (64 KB, 8 frames)
-  - Cria a tabela de páginas e a MMU
-  - Lança os processos leves como goroutines produtoras
-  - Inicia a MMU como goroutine consumidora
-  - Aguarda o número configurado de instruções e encerra
-*/
 func Run(cfg Config) error {
 	if err := constants.ValidateProcessSize(cfg.Sizes); err != nil {
 		return fmt.Errorf("configuração inválida: %w", err)
 	}
 
-	fmt.Println("=== Simulador de Memória Virtual ===")
+	fmt.Println("==== Simulador de Memória Virtual ====")
 	fmt.Printf("Memória física: %d KB (%d frames de %d KB)\n",
 		constants.PhysicalMem/1024,
 		constants.NumFrames,
@@ -57,7 +48,7 @@ func Run(cfg Config) error {
 	fmt.Println("=====================================")
 	fmt.Println()
 
-	// Inicialização do espaço virtual (backing store de 1 MB).
+	// NOTE : Backing store 1MB
 	virtualMem := make([]byte, constants.VirtualMem)
 	globalOffset := 0
 	processes := make([]*process.LightProcess, len(cfg.Sizes))
@@ -90,6 +81,7 @@ func Run(cfg Config) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	//semaforo
 	var wg sync.WaitGroup
 
 	// Goroutines produtoras (processos leves).
